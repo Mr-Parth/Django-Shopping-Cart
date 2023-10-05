@@ -21,7 +21,7 @@ class CartItemTests(TestCase):
 
     def test_list_user_cart_items(self):
         self.client.force_authenticate(user=self.user)
-        response = self.client.get('/user/cart/list_items/')
+        response = self.client.get('/api/user/cart/list_items/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Assuming only one item is in the cart
         self.assertEqual(len(response.data), 1)  
@@ -32,7 +32,7 @@ class CartItemTests(TestCase):
         self.client.force_authenticate(user=self.user)
         # Add 3 more items to the cart
         data = {'quantity': 3}  
-        response = self.client.post(f'/user/cart/add_item/{self.item.product_identifier}', data, format='json')
+        response = self.client.post(f'/api/user/cart/add_item/{self.item.product_identifier}', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.cart_item.refresh_from_db()
          # Initial quantity (5) + added quantity (3)
@@ -42,7 +42,7 @@ class CartItemTests(TestCase):
         self.client.force_authenticate(user=self.user)
         # Add 3 more items to the cart
         data = {'quantity': 3}  
-        response = self.client.post(f'/user/cart/add_item/random_product_name', data, format='json')
+        response = self.client.post(f'/api/user/cart/add_item/random_product_name', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.cart_item.refresh_from_db()
         # Initial quantity (5) 
@@ -51,7 +51,7 @@ class CartItemTests(TestCase):
     def test_remove_from_cart(self):
         self.client.force_authenticate(user=self.user)
         data = {'quantity': 2}  # Remove 2 items from the cart
-        response = self.client.delete(f'/user/cart/remove_item/{self.item.product_identifier}', data, format='json')
+        response = self.client.delete(f'/api/user/cart/remove_item/{self.item.product_identifier}', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.cart_item.refresh_from_db()
         # Initial quantity (5) - removed quantity (2)
@@ -59,7 +59,7 @@ class CartItemTests(TestCase):
         
         # Test removing the entire item from the cart
         data = {'quantity': 3}  # Remove the remaining 3 items from the cart
-        response = self.client.delete(f'/user/cart/remove_item/{self.item.product_identifier}', data, format='json')
+        response = self.client.delete(f'/api/user/cart/remove_item/{self.item.product_identifier}', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Cart item should be deleted
         self.assertFalse(CartItem.objects.filter(user=self.user, item=self.item).exists())  
@@ -67,7 +67,7 @@ class CartItemTests(TestCase):
     def test_remove_from_cart_failiure_invalid_product_item(self):
         self.client.force_authenticate(user=self.user)
         data = {'quantity': 2}  # Remove 2 items from the cart
-        response = self.client.delete(f'/user/cart/remove_item/random_product_name', data, format='json')
+        response = self.client.delete(f'/api/user/cart/remove_item/random_product_name', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.cart_item.refresh_from_db()
         self.assertEqual(self.cart_item.quantity, 5)  # Initial quantity (5)
@@ -75,7 +75,7 @@ class CartItemTests(TestCase):
     def test_remove_from_cart_removing_more_quantity_than_cart_quantity(self):
         self.client.force_authenticate(user=self.user)
         data = {'quantity': 10}  # Remove 2 items from the cart
-        response = self.client.delete(f'/user/cart/remove_item/{self.item.product_identifier}', data, format='json')
+        response = self.client.delete(f'/api/user/cart/remove_item/{self.item.product_identifier}', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # For quantity more or equal to quantity in cart, delete entry
         self.assertFalse(CartItem.objects.filter(user=self.user, item=self.item).exists())   

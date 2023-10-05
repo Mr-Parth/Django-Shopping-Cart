@@ -36,7 +36,7 @@ class ItemViewsTestCase(TestCase):
             'price': '1000',
             'stock': '100',
         }
-        response = self.client.post('/item/api/add_item/', self.item_data, format='json')
+        response = self.client.post('/api/item/add_item/', self.item_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_add_items_bulk(self):
@@ -57,7 +57,7 @@ class ItemViewsTestCase(TestCase):
                 'stock': '300',
             },
         ]
-        response = self.client.post('/item/api/add_items/', item_data_list, format='json')
+        response = self.client.post('/api/item/add_items/', item_data_list, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_edit_item(self):
@@ -69,13 +69,13 @@ class ItemViewsTestCase(TestCase):
             'price': '8000',
             'stock': '50',
         }
-        response = self.client.put(f'/item/api/edit_item/{self.item.id}', updated_data, format='json')
+        response = self.client.put(f'/api/item/edit_item/{self.item.id}', updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
         self.assertEqual(self.item.display_name, updated_data['display_name'])
 
     def test_delete_item(self):
         self.client.force_authenticate(user=self.admin_user)
-        response = self.client.delete(f'/item/api/delete_item/{self.item.id}')
+        response = self.client.delete(f'/api/item/delete_item/{self.item.id}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(Item.objects.filter(pk=self.item.pk).exists())
