@@ -1,17 +1,35 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Core Models of this project - UserProfile and Item
 
 class CustomUser(AbstractUser):
     is_suspended = models.BooleanField(default=False)
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=[("admin", "Admin"), ("user", "User")])
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+    
+    def __str__(self) -> str:
+        return self.username
 
-class Item(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.IntegerField()
+
+class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ("admin", "Admin"),
+        ("user", "User"),
+    ]
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    def __str__(self) -> str:
+        return self.user.username
+    
+@receiver(post_save, sender=CustomUser)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        role = "user"
+        if instance.is_staff:
+            role = "admin"
+        UserProfile.objects.create(user=instance, role=role)

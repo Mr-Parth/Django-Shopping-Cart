@@ -35,12 +35,15 @@ AUTH_USER_MODEL = 'core.CustomUser'
 INSTALLED_APPS = [
     'core',
     'cart',
+    'item',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "rest_framework",
+    "rest_framework.authtoken"
 ]
 
 MIDDLEWARE = [
