@@ -22,7 +22,7 @@ def register_user(request):
         user.save()
         token = Token.objects.create(user=user)
         serializer = serializers.UserSerialiser(instance=user)
-        return Response({"token": token.key, "data": serializer.data})
+        return Response({"token": token.key, "data": serializer.data}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # User Login
@@ -40,11 +40,7 @@ def login_user(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
 def suspend_user(request, user_id):
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    
+    user = get_object_or_404(User, id=user_id)
     if user == request.user:
         return Response({"error": "Can not suspend Self profile"}, status=status.HTTP_400_BAD_REQUEST)
 

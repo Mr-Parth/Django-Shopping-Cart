@@ -1,8 +1,8 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework import status
-from core.models import CustomUser, UserProfile
-from .models import Item  # Replace 'your_app' with your app name
+from core.models import CustomUser
+from .models import Item 
 
 User = CustomUser
 
@@ -53,7 +53,7 @@ class ItemViewsTestCase(TestCase):
                 'product_identifier': 'item3',
                 'display_name': 'Item 3',
                 'description': 'Description 3',
-                'price': '20.99',
+                'price': '10000',
                 'stock': '300',
             },
         ]
@@ -66,11 +66,10 @@ class ItemViewsTestCase(TestCase):
             'product_identifier': 'item1',
             'display_name': 'Item 1 Updated',
             'description': 'Updated Description',
-            'price': '12.99',
+            'price': '8000',
             'stock': '50',
         }
         response = self.client.put(f'/item/api/edit_item/{self.item.id}', updated_data, format='json')
-        print(f'/item/api/edit_item/{self.item.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.item.refresh_from_db()
         self.assertEqual(self.item.display_name, updated_data['display_name'])
