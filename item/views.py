@@ -8,7 +8,9 @@ from . import serializers
 from .models import Item
 from core.permissions import IsAdminUserProfile
 
-# Admin: Add Item
+# All these views are only accessible by Admin User
+
+# Add New Item
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
@@ -19,6 +21,8 @@ def add_item(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Add New Items in Bulk
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
@@ -29,6 +33,7 @@ def add_items_bulk(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Edit Item
 @api_view(['PUT'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
@@ -40,6 +45,7 @@ def edit_item(request, item_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Delete Item
 @api_view(['DELETE'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])

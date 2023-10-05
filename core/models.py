@@ -3,8 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-# Core Models of this project - UserProfile and Item
-
+# Core Models of this project - UserProfile and CustomUser
 class CustomUser(AbstractUser):
     is_suspended = models.BooleanField(default=False)
 

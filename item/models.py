@@ -13,4 +13,4 @@ class Item(models.Model):
     stock = models.IntegerField()
 
     def __str__(self) -> str:
-        return self.product_name
+        return self.product_identifier

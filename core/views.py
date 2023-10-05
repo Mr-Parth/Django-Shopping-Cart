@@ -35,15 +35,18 @@ def login_user(request):
     serializer = serializers.UserSerialiser(instance=user)
     return Response({"token":token.key, "data": serializer.data})
 
-# Admin: Suspend User
+# Suspend User - Only Admin User can perform this
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
 def suspend_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
+
+    # Self User check
     if user == request.user:
         return Response({"error": "Can not suspend Self profile"}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Check to not allow suspension of admin user
     if user.userprofile.role == "admin":
         return Response({"error": "Can not suspend Admin profile"}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -8,7 +8,7 @@ from item.models import Item
 from .models import CartItem
 from .serializers import CartItemSerializer
 
-# User: List Available Items
+# View to list available items in user cart
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])  
@@ -21,7 +21,7 @@ def list_user_cart_items(request):
     serializer = CartItemSerializer(cart_items, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-# User: Add Item to Cart
+# View to add item in user cart
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -45,7 +45,7 @@ def add_to_cart(request, product_name):
     serializer = CartItemSerializer(cart_item)
     return Response({'message': 'Given item quantity increased in cart', 'data': serializer.data}, status=status.HTTP_200_OK)
 
-# User: Remove Item from Cart
+# View to remove item from user cart
 @api_view(['DELETE'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -56,10 +56,12 @@ def remove_from_cart(request, product_name):
     cart_item  = get_object_or_404(CartItem, user=request.user, item=item)
     cart_item.quantity -= quantity
 
+    # Delete cart entry if quantity is less than 0
     if cart_item.quantity < 1:
         cart_item.delete()
         return Response({'message': 'Item removed from cart'}, status=status.HTTP_200_OK)
     
+     # Save the cart item
     cart_item.save()
     serializer = CartItemSerializer(cart_item)
     return Response({'message': 'Given Item quantity reduced from cart', 'data': serializer.data}, status=status.HTTP_200_OK)
