@@ -25,8 +25,8 @@ def list_user_cart_items(request):
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def add_to_cart(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
+def add_to_cart(request, product_name):
+    item = get_object_or_404(Item, product_identifier=product_name)
     quantity = int(request.data.get('quantity', 1))
     if quantity < 1:
         quantity = 0
@@ -49,8 +49,8 @@ def add_to_cart(request, item_id):
 @api_view(['DELETE'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def remove_from_cart(request, item_id):
-    item = get_object_or_404(Item, id=item_id)
+def remove_from_cart(request, product_name):
+    item = get_object_or_404(Item, product_identifier=product_name)
     quantity = abs(int(request.data.get('quantity', 1)))
 
     cart_item  = get_object_or_404(CartItem, user=request.user, item=item)

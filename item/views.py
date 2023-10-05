@@ -33,7 +33,7 @@ def add_items_bulk(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
 def edit_item(request, item_id):
-    item = get_object_or_404(Item, pk=item_id)
+    item = get_object_or_404(Item, id=item_id)
     serializer = serializers.ItemSerializer(item, data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -44,6 +44,6 @@ def edit_item(request, item_id):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAdminUserProfile])
 def delete_item(request, item_id):
-    item = get_object_or_404(Item, pk=item_id)
+    item = get_object_or_404(Item, id=item_id)
     item.delete()
     return Response({"message": "Item deleted"}, status=status.HTTP_200_OK)
