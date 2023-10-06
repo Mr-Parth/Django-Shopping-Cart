@@ -41,6 +41,8 @@ Access django admin panel at localhost:8000/admin
 
 Database used : db.sqlite3 (Since it's easy to setup for development. It is a single compact file in a well-defined cross-platform format. For production environment, it is better to changed it to postgresql or other sql variants depending upon further usecases)
 
+Pass Token <token_generated_by_login_or_registration> as Authorization in Headers while triggering any non public APIs
+
     
 ## API Implemented
 
